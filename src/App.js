@@ -4,26 +4,18 @@ import {OutTable, ExcelRenderer} from 'react-excel-renderer';
 import { Jumbotron, Col, Input, InputGroup, InputGroupAddon, FormGroup, Label, Button, Fade, FormFeedback, Container, Card } from 'reactstrap';
 
 class App extends Component {
-  constructor(props){
-    super(props);
-    this.state={
-      isOpen: false,
+  state={
       dataLoaded: false,
       isFormInvalid: false,
       rows: null,
       cols: null
-    }
-    this.fileHandler = this.fileHandler.bind(this);
-    this.toggle = this.toggle.bind(this);
-    this.openFileBrowser = this.openFileBrowser.bind(this);
-    this.renderFile = this.renderFile.bind(this);
-    this.openNewPage = this.openNewPage.bind(this);
-    this.fileInput = React.createRef();
-  }
+  };
+  fileInput = React.createRef();
 
   renderFile = (fileObj) => {
       //just pass the fileObj as parameter
       ExcelRenderer(fileObj, (err, resp) => {
+        debugger;
         if(err){
           console.log(err);            
         }
@@ -35,7 +27,7 @@ class App extends Component {
           });
         }
       }); 
-  }
+  };
 
   fileHandler = (event) => {    
     if(event.target.files.length){
@@ -58,13 +50,7 @@ class App extends Component {
         })
       }
     }               
-  }
-
-  toggle() {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
-  }
+  };
 
   openFileBrowser = () => {
     this.fileInput.current.click();
@@ -77,7 +63,7 @@ class App extends Component {
 
   render() {
     return (
-      <div>
+      <React.Fragment>
         <div>
           <Jumbotron className="jumbotron-background">          
               <h1 className="display-3">react-excel-renderer</h1>
@@ -89,14 +75,13 @@ class App extends Component {
           </Jumbotron>
         </div>
         <Container>
-        <form>
           <FormGroup row>
             <Label for="exampleFile" xs={6} sm={4} lg={2} size="lg">Upload</Label>          
             <Col xs={4} sm={8} lg={10}>                                                     
               <InputGroup>
                 <InputGroupAddon addonType="prepend">
-                  <Button color="info" style={{color: "white", zIndex: 0}} onClick={this.openFileBrowser.bind(this)}><i className="cui-file"></i> Browse&hellip;</Button>
-                  <input type="file" hidden onChange={this.fileHandler.bind(this)} ref={this.fileInput} onClick={(event)=> { event.target.value = null }} style={{"padding":"10px"}} />                                
+                  <Button color="info" style={{color: "white", zIndex: 0}} onClick={this.openFileBrowser}><i className="cui-file"></i> Browse&hellip;</Button>
+                  <input type="file" hidden ref={this.fileInput} onChange={this.fileHandler} onClick={(event)=> { event.target.value = null }} style={{"padding":"10px"}} />                                
                 </InputGroupAddon>
                 <Input type="text" className="form-control" value={this.state.uploadedFileName} readOnly invalid={this.state.isFormInvalid} />                                              
                 <FormFeedback>    
@@ -106,19 +91,16 @@ class App extends Component {
                 </FormFeedback>
               </InputGroup>     
             </Col>                                                   
-          </FormGroup>   
-        </form>
+          </FormGroup>  
 
         {this.state.dataLoaded && 
-        <div>
-          <Card body outline color="secondary" className="restrict-card">
-            
+          <div>
+            <Card body outline color="secondary" className="restrict-card">
               <OutTable data={this.state.rows} columns={this.state.cols} tableClassName="ExcelTable2007" tableHeaderRowClass="heading" />
-            
-          </Card>  
-        </div>}
+            </Card>  
+          </div>}
         </Container>
-      </div>
+      </React.Fragment>
     );
   }
 }
